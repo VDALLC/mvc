@@ -2,7 +2,6 @@
 namespace Vda\Mvc\Controller;
 
 use Exception;
-use Psr\Log\LoggerInterface;
 use Vda\Http\IResponse;
 use Vda\Http\Request;
 use Vda\Http\Response;
@@ -51,7 +50,7 @@ abstract class AbstractController implements IController
         $status = 200;
         try {
             $this->init();
-            $result = $this->beforeHandle($action);
+            $result = $this->beforeHandle($action, $params);
             if (is_null($result)) {
                 // It is hard to properly handle exception if Route will check controller name (section).
                 // Kind of hack, since it is very convenient to handle errors in same controller.
@@ -147,15 +146,16 @@ abstract class AbstractController implements IController
     /**
      * Check pre action condition.
      *
-     * Override this method to check desired conditions. if this method anything but null,
+     * Override this method to check desired conditions. If this method anything but null,
      * handle method will not be called.
      *
      * @see init()
      *
      * @param $action
+     * @param $params
      * @return mixed
      */
-    protected function beforeHandle($action)
+    protected function beforeHandle($action, $params)
     {
         return null;
     }
