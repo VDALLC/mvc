@@ -235,9 +235,9 @@ abstract class AbstractController implements IController
         }
     }
 
-    protected function createDefaultTemplate($template, $params)
+    protected function createDefaultTemplate($template, $params, $ext = null)
     {
-        $view = new TwigTemplate($template . '.html', $this->viewPath);
+        $view = new TwigTemplate($template . (is_null($ext) ? '.html' : $ext), $this->viewPath);
         $view->addParams($params);
 
         return $view;
