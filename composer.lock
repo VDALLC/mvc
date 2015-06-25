@@ -1,0 +1,92 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "0b26ccb852b5db77e5949b1a729c9e9a",
+    "packages": [
+        {
+            "name": "vda/http",
+            "version": "0.12.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/VDALLC/http.git",
+                "reference": "9d15b553569e60b5bdf10b8dc9ec1f738a51e810"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer.vda-team.com/dist/vda-http-0.12.2-2c1ee7.zip",
+                "reference": "9d15b553569e60b5bdf10b8dc9ec1f738a51e810",
+                "shasum": "8cdc40e07217024657d87e50b5c8b8e133f31bb8"
+            },
+            "require": {
+                "php": ">=5.3.23",
+                "vda/util": "0.11.*|0.12.*"
+            },
+            "suggest": {
+                "ext-xmlrpc": "Needed for XmlrpcClient"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-trunk": "1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Vda\\Http\\": "src/"
+                }
+            },
+            "description": "HTTP Support",
+            "keywords": [
+                "http"
+            ],
+            "time": "2015-01-22 11:22:30"
+        },
+        {
+            "name": "vda/util",
+            "version": "0.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/VDALLC/util.git",
+                "reference": "f53592d83daca38a377c2309dda6c504a41afb1a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer.vda-team.com/dist/vda-util-0.12.0-4a98d9.zip",
+                "reference": "f53592d83daca38a377c2309dda6c504a41afb1a",
+                "shasum": "618d4a1511fef9d3bd39733e46d4efc29bd44c33"
+            },
+            "require": {
+                "php": ">=5.3.23"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-trunk": "1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Vda\\Util\\": "src/"
+                }
+            },
+            "description": "Some usefull utils",
+            "keywords": [
+                "util"
+            ],
+            "time": "2015-01-22 08:47:44"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=5.3.23"
+    },
+    "platform-dev": []
+}

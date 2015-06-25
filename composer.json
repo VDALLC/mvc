@@ -3,6 +3,12 @@
     "type": "library",
     "description": "MVC",
     "keywords": ["mvc"],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://composer.vda-team.com/"
+        }
+    ],
     "require": {
         "php": ">=5.3.23",
         "vda/http": "0.11.*|0.12.*"

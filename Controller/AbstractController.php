@@ -11,7 +11,7 @@ use Vda\Mvc\Exception\RouteNotFoundException;
 use Vda\Mvc\View\ITemplate;
 use Vda\Mvc\View\TwigTemplate;
 use Vda\App\ClientException;
-use Vda\App\ApplicationContext;
+use Vda\Util\ParamStore\IParamStore;
 
 abstract class AbstractController implements IController
 {
@@ -19,6 +19,11 @@ abstract class AbstractController implements IController
      * @var Request
      */
     protected $request;
+
+    /**
+     * @var IParamStore
+     */
+    protected $config;
 
     /**
      * Name of controller.
@@ -111,9 +116,7 @@ abstract class AbstractController implements IController
         $result['status'] = $status;
         $result['action'] = $template;
 
-        $config = ApplicationContext::get()->getConfig();
-
-        if ($config->getBool('debug/enable')) {
+        if ($this->config && $this->config->getBool('debug/enable')) {
             $result['originalMessage'] = $exception->getMessage();
             $result['trace'] = $exception->getTraceAsString();
         }
