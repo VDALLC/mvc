@@ -2,6 +2,7 @@
 namespace Vda\Mvc\Controller;
 
 use Exception;
+use Vda\App\ClientException;
 use Vda\Http\IResponse;
 use Vda\Http\Request;
 use Vda\Http\Response;
@@ -9,8 +10,7 @@ use Vda\Mvc\Exception\AccessDeniedException;
 use Vda\Mvc\Exception\BadRequestException;
 use Vda\Mvc\Exception\RouteNotFoundException;
 use Vda\Mvc\View\ITemplate;
-use Vda\Mvc\View\TwigTemplate;
-use Vda\App\ClientException;
+use Vda\Mvc\View\ITemplateService;
 use Vda\Util\ParamStore\IParamStore;
 
 abstract class AbstractController implements IController
@@ -34,15 +34,20 @@ abstract class AbstractController implements IController
      */
     protected $name;
 
-    protected $viewPath = 'app/views/';
-
     protected $defaultAction = 'index';
 
-    public function __construct()
+    /**
+     * @var ITemplateService
+     */
+    protected $templateService;
+
+    public function __construct(ITemplateService $templateService)
     {
         if (empty($this->name)) {
             throw new Exception('You must define controller name');
         }
+
+        $this->templateService = $templateService;
     }
 
     public function handle(array $params, Request $request)
@@ -238,11 +243,12 @@ abstract class AbstractController implements IController
         }
     }
 
-    protected function createDefaultTemplate($template, $params, $ext = null)
+    protected function createDefaultTemplate($action, array $params = [])
     {
-        $view = new TwigTemplate($template . (is_null($ext) ? '.html' : $ext), $this->viewPath);
-        $view->addParams($params);
+        $template = $this->templateService->createTemplate($action);
 
-        return $view;
+        $template->addParams($params);
+
+        return $template;
     }
 }

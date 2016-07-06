@@ -6,7 +6,7 @@
     "repositories": [
         {
             "type": "composer",
-            "url": "http://composer.vda-team.com/"
+            "url": "https://composer.vda-team.com/"
         }
     ],
     "require": {
