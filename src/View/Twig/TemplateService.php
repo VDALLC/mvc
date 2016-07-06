@@ -5,15 +5,17 @@ use Vda\Mvc\View\ITemplateService;
 
 class TemplateService implements ITemplateService
 {
-    private $templateOptions;
+    private $defaultOptions;
 
-    public function __construct(array $templateOptions)
+    public function __construct(array $defaultOptions)
     {
-        $this->templateOptions = $templateOptions;
+        $this->defaultOptions = $defaultOptions;
     }
 
-    public function createTemplate($templateFilename)
+    public function createTemplate($name, array $options = [])
     {
-        return new Template($templateFilename, $this->templateOptions);
+        $options = array_merge($this->defaultOptions, $options);
+
+        return new Template($name, $options);
     }
 }
