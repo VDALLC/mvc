@@ -55,9 +55,8 @@ abstract class AbstractController implements IController
         $this->request = $request;
         $section = array_shift($params);
         $action = $this->overrideAction(array_shift($params), $params);
-
-        // this is just a default value of resultToResponse(), not a final status
         $status = 200;
+
         try {
             $this->init();
             $result = $this->beforeHandle($action, $params);
@@ -70,56 +69,51 @@ abstract class AbstractController implements IController
                 // Only call action handler if pre-handler does not return any result
                 $result = $this->handleAction($action, $params);
             }
-
-            $result = $this->afterHandle($action, $result);
-            return $this->resultToResponse($result, $section . '/' . $action, $status);
-        } catch (Exception $ex) {
+        } catch (\Exception $e) {
+            $result = $this->handleError($e);
             $section = 'errors';
-            $result = $this->handleError($ex);
-            $status = $result['status'];
             $action = $result['action'];
-
-            $result = $this->afterHandle($action, $result);
-            return $this->resultToResponse($result, $section . '/' . $action, $status);
+            $status = $result['status'];
         }
+
+        $result = $this->afterHandle($action, $result);
+
+        return $this->resultToResponse($result, $action, $section, $status);
     }
 
     protected function handleError(Exception $exception)
     {
         if ($exception instanceof RouteNotFoundException) {
-            $template = '404';
-            $status = 404;
-            $result = array(
+            $result = [
+                'action'  => '404',
+                'status'  => 404,
                 'message' => $exception->getMessage(),
-            );
+            ];
         } elseif ($exception instanceof AccessDeniedException) {
-            $template = '403';
-            $status = 403;
-            $result = array(
+            $result = [
+                'action'  => '403',
+                'status'  => 403,
                 'message' => $exception->getMessage(),
-            );
+            ];
         } elseif ($exception instanceof BadRequestException) {
-            $template = '400';
-            $status = 400;
-            $result = array(
+            $result = [
+                'action'  => '400',
+                'status'  => 400,
                 'message' => $exception->getMessage(),
-            );
+            ];
         } elseif ($exception instanceof ClientException) {
-            $template = 'logic';
-            $status = 200; // 400?
-            $result = array(
+            $result = [
+                'action'  => 'logic',
+                'status'  => 200, // 400?
                 'message' => $exception->getClientMessage(),
-            );
+            ];
         } else {
-            $template = '500';
-            $status = 500;
-            $result = array(
+            $result = [
+                'action'  => '500',
+                'status'  => 500,
                 'message' => 'Internal error',
-            );
+            ];
         }
-
-        $result['status'] = $status;
-        $result['action'] = $template;
 
         if ($this->config && $this->config->getBool('debug/enable')) {
             $result['originalMessage'] = $exception->getMessage();
@@ -168,9 +162,9 @@ abstract class AbstractController implements IController
         return null;
     }
 
-    protected function afterHandle($action, $res)
+    protected function afterHandle($action, $result)
     {
-        return $res;
+        return $result;
     }
 
     protected function handleAction($action, array $params)
@@ -227,25 +221,34 @@ abstract class AbstractController implements IController
         return $method;
     }
 
-    protected function resultToResponse($result, $template, $status = 200)
+    protected function resultToResponse($result, $action, $section, $status)
     {
         if ($result instanceof IResponse) {
             return $result;
-        } else if ($result instanceof ITemplate) {
-            return new Response($result->render(), $status);
-        } else if (is_array($result) || is_null($result)) {
-            return new Response(
-                $this->createDefaultTemplate($template, (array)$result)->render(),
-                $status
-            );
-        } else {
-            return new Response($result, $status);
         }
+
+        if (is_array($result) || is_null($result)) {
+            $result = $this->createDefaultTemplate(
+                $this->getTemplateName($action, $section),
+                $result ?: []
+            );
+        }
+
+        if ($result instanceof ITemplate) {
+            $result = $result->render();
+        }
+
+        return new Response($result, $status);
     }
 
-    protected function createDefaultTemplate($action, array $params = [])
+    protected function getTemplateName($action, $section, $extension = '.html.twig')
     {
-        $template = $this->templateService->createTemplate($action);
+        return $section . DIRECTORY_SEPARATOR . $action . $extension;
+    }
+
+    protected function createDefaultTemplate($templateName, array $params = [])
+    {
+        $template = $this->templateService->createTemplate($templateName);
 
         $template->addParams($params);
 

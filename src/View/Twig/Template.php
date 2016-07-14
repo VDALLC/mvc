@@ -12,7 +12,6 @@ use Vda\Mvc\View\ITemplate;
 class Template implements ITemplate
 {
     protected static $defaults = [
-        'templateExt' => '.html.twig',
         'viewPath' => 'views',
         'cache' => null,
         'auto_reload' => true,
@@ -33,7 +32,7 @@ class Template implements ITemplate
     {
         $options = array_merge(self::$defaults, $options);
 
-        $this->fileName = $templateFilename . $options['templateExt'];
+        $this->fileName = $templateFilename;
 
         if ($options['viewPath'] instanceof Twig_LoaderInterface) {
             $loader = $options['viewPath'];
