@@ -172,13 +172,24 @@ abstract class AbstractController implements IController
         $rc = new \ReflectionClass($this);
         $method = $this->getActionHandler($rc, $action, $params);
 
+        $this->checkActionHandler($method, $action, $rc);
+
+        return $method->invokeArgs($this, $params);
+    }
+
+    /**
+     * @param \ReflectionMethod|null $method
+     * @param string $action
+     * @param \ReflectionClass $rc
+     * @throws RouteNotFoundException
+     */
+    protected function checkActionHandler($method, $action, \ReflectionClass $rc)
+    {
         if (empty($method)) {
             throw new RouteNotFoundException(
                 "Unable to find handler for action '{$action}' in class '{$rc->getName()}'"
             );
         }
-
-        return $method->invokeArgs($this, $params);
     }
 
     protected function getActionHandler(\ReflectionClass $rc, $action, array $params)
