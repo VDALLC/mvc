@@ -28,7 +28,13 @@ class CleanUrlControllerRoute extends AbstractControllerRoute
         $path = $request->rewroteUri() ? : $request->path();
 
         $parts = parse_url(substr($path, strlen($this->urlPrefix)));
-        $this->params = array_filter(explode('/', trim($parts['path'], '/')));
+        $this->params = array_filter(
+            explode('/', trim($parts['path'], '/')),
+            function($v, $k) {
+                return $v !== '' && $v !== null;
+            },
+            ARRAY_FILTER_USE_BOTH
+        );
 
         if (empty($this->params)) {
             $this->params = array($this->fallbackControllerName);
