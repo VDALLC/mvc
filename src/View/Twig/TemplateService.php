@@ -14,8 +14,12 @@ class TemplateService implements ITemplateService
 
     public function createTemplate($name, array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = \array_merge($this->defaultOptions, $options);
 
-        return new Template($name, $options);
+        if (\class_exists(\Twig_Environment::class)) {
+            return new Template($name, $options);
+        }
+
+        return new Twig3Template($name, $options);
     }
 }

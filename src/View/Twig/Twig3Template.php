@@ -1,15 +1,14 @@
 <?php
 namespace Vda\Mvc\View\Twig;
 
-use InvalidArgumentException;
-use Twig_Environment;
-use Twig_Extension_Debug;
-use Twig_Loader_Filesystem;
-use Twig_LoaderInterface;
-use Twig_SimpleFunction;
+use Twig\Environment;
+use Twig\Extension\DebugExtension;
+use Twig\Loader\FilesystemLoader;
+use Twig\Loader\LoaderInterface;
+use Twig\TwigFunction;
 use Vda\Mvc\View\ITemplate;
 
-class Template implements ITemplate
+class Twig3Template implements ITemplate
 {
     protected static $defaults = [
         'viewPath' => 'views',
@@ -23,37 +22,32 @@ class Template implements ITemplate
 
     protected $twig;
 
-    /**
-     * @param string $templateFilename
-     * @param array $twigOptions
-     * @throws InvalidArgumentException
-     */
-    public function __construct($templateFilename, array $options = [])
+    public function __construct(string $templateFilename, array $options = [])
     {
         $options = \array_merge(self::$defaults, $options);
 
         $this->fileName = $templateFilename;
 
-        if ($options['viewPath'] instanceof Twig_LoaderInterface) {
+        if ($options['viewPath'] instanceof LoaderInterface) {
             $loader = $options['viewPath'];
         } elseif (\is_string($options['viewPath']) || \is_array($options['viewPath'])) {
-            $loader = new Twig_Loader_Filesystem($options['viewPath']);
+            $loader = new FilesystemLoader($options['viewPath']);
         } else {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'Invalid $templatePath value: ' . \print_r($options['viewPath'], true)
             );
         }
 
-        $this->twig = new Twig_Environment($loader, $options);
+        $this->twig = new Environment($loader, $options);
 
         if ($options['debug']) {
-            $this->twig->addExtension(new Twig_Extension_Debug());
+            $this->twig->addExtension(new DebugExtension());
         }
     }
 
     public function registerFunction($name, callable $impl)
     {
-        $this->twig->addFunction(new Twig_SimpleFunction($name, $impl));
+        $this->twig->addFunction(new TwigFunction($name, $impl));
     }
 
     public function render()
